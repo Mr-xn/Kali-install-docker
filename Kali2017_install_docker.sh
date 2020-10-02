@@ -8,37 +8,26 @@
 #   PS: 欢迎大家到github提建议和bug
 #=================================================
 
-
-# install dependencies 
-sudo apt-get install apt-transport-https ca-certificates curl gnupg software-properties-common dirmngr
-
-# use https get sources  
-sudo echo "deb https://http.kali.org/kali kali-rolling main non-free contrib" > /etc/apt/sources.list
-sudo echo "deb-src https://http.kali.org/kali kali-rolling main non-free contrib" >> /etc/apt/sources.list
-
+#!/bin/bash
 
 # update apt-get
-export DEBIAN_FRONTEND="noninteractive"
 sudo apt-get update
 
 # remove previously installed Docker
 sudo apt-get purge lxc-docker*
 sudo apt-get purge docker.io*
 
-
-# add Docker repo gpg key
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-
-# add deb docker sources
-sudo echo "deb [arch=amd64] https://download.docker.com/linux/debian stretch stable" >> /etc/apt/sources.list 
-
-cat > /etc/apt/sources.list.d/docker.list <<'EOF'
-deb https://apt.dockerproject.org/repo debian-stretch main
-EOF
 sudo apt-get update
 
 # install Docker
-sudo apt-get install docker-ce
+sudo apt install -y docker.io
+sudo systemctl enable docker --now
+
+
+# configure Docker user group permissions
+sudo groupadd docker
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
 
 # run Hellow World image
 sudo docker run hello-world
